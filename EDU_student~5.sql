@@ -53,7 +53,7 @@ set"容人數量"=5000
 where SQL_OFFICE＿DATA.設施地址='苗栗縣竹南鎮和平街79號';
 
 --5-2
-delete from SQL_OFFICE＿DATA 
+delete  SQL_OFFICE＿DATA 
 where "容人數量" <1000;
 
 commit;
