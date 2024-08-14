@@ -1,205 +1,227 @@
 package com.cathaybk.practice.nt00550339.b;
 
 import java.sql.*;
-
+import java.time.chrono.MinguoChronology;
 import java.util.*;
-import java.util.Scanner;
 
 public class CarDatabaseManager {
 
-    private static final String URL = "jdbc:oracle:thin:@//localhost:1521/XE";
+	private static final String URL = "jdbc:oracle:thin:@//localhost:1521/XE";
 
-    private static final String USER = "student";
+	private static final String USER = "student";
 
-    private static final String PASSWORD = "student123456";
+	private static final String PASSWORD = "student123456";
 
+	public static void main(String[] args) {
 
+		Scanner scanner = new Scanner(System.in);
 
-    public static void main(String[] args) {
+		System.out.println("請選擇以下指令輸入: select, insert, update, delete");
 
-        Scanner scanner = new Scanner(System.in);
+		String command = scanner.nextLine();
 
-        System.out.println("請選擇以下指令輸入: select, insert, update, delete");
+		try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
 
-        String command = scanner.nextLine();
+			switch (command.toLowerCase()) {
 
+			case "select":
 
+				query(connection, scanner);
 
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+				break;
 
-            switch (command.toLowerCase()) {
+			case "insert":
 
-                case "select":
+				insert(connection, scanner);
 
-                    query(connection);
+				break;
 
-                    break;
+			case "update":
 
-                case "insert":
+				update(connection, scanner);
 
-                    insert(connection, scanner);
+				break;
 
-                    break;
+			case "delete":
 
-                case "update":
+				delete(connection, scanner);
 
-                    update(connection, scanner);
+				break;
 
-                    break;
+			default:
 
-                case "delete":
+				System.out.println("無效的指令");
 
-                    delete(connection, scanner);
+			}
 
-                    break;
+		} catch (SQLException e) {
 
-                default:
+			e.printStackTrace();
 
-                    System.out.println("無效的指令");
+		}
 
+	}
+
+	private static void query(Connection connection,Scanner scanner) throws SQLException {
+    	 System.out.println("請輸入製造商 (留空表示不指定):");
+         String manufacturer = scanner.nextLine().trim();
+         
+         System.out.println("請輸入類型 (留空表示不指定):");
+         String type = scanner.nextLine().trim();
+         
+         StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM CARS WHERE 1=1");
+         List<Object> parameters = new ArrayList<>();
+         
+         if (!manufacturer.isEmpty()) {
+             sqlBuilder.append(" AND MANUFACTURER = ?");
+             parameters.add(manufacturer);
+         }
+         if (!type.isEmpty()) {
+             sqlBuilder.append(" AND TYPE = ?");
+             parameters.add(type);
+         }
+         String sql = sqlBuilder.toString();
+         
+         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+             for (int i = 0; i < parameters.size(); i++) {
+                 pstmt.setObject(i + 1, parameters.get(i));
+                 }
+             try (ResultSet rs = pstmt.executeQuery()) {
+                 List<Map<String, Object>> cars = new ArrayList<>();
+                 ResultSetMetaData metaData = rs.getMetaData();
+                 int columnCount = metaData.getColumnCount();
+                 
+             while (rs.next()) {
+                 Map<String, Object> row = new HashMap<>();
+                 for (int i = 1; i <= columnCount; i++) {
+                 row.put(metaData.getColumnName(i), rs.getObject(i));
+                     }
+                     cars.add(row);
+                 }
+          // Print results
+             if (cars.isEmpty()) {
+                 System.out.println("沒有符合條件的資料");
+             } else {
+                 for (Map<String, Object> car : cars) {
+                     System.out.println(car);
+              }
             }
+           }
+         }
+	}
+	private static void insert(Connection connection, Scanner scanner) throws SQLException {
 
-        } catch (SQLException e) {
+		System.out.println("請輸入製造商:");
 
-            e.printStackTrace();
+		String manufacturer = scanner.nextLine();
 
-        }
+		System.out.println("請輸入類型:");
 
-    }
+		String type = scanner.nextLine();
 
-    
-  
+		System.out.println("請輸入最低價格:");
 
-    private static void query(Connection connection) throws SQLException {
-        Scanner scanner = new Scanner(System.in);
+		double minPrice = scanner.nextDouble();
 
-        // 提示使用者輸入查詢條件
-        System.out.print("請輸入製造商 (Manufacturer): ");
-        String manufacturer = scanner.nextLine();
+		System.out.println("請輸入價格:");
 
-        System.out.print("請輸入類型 (Type): ");
-        String type = scanner.nextLine();
+		double price = scanner.nextDouble();
 
-        // 使用WHERE子句來查詢特定條件
-        String sql = "SELECT * FROM CARS WHERE Manufacturer = ? AND TYPE = ?";
+		String sql = "INSERT INTO CARS (MANUFACTURER, TYPE, MIN_PRICE, PRICE) VALUES (?, ?, ?, ?)";
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, manufacturer);
-            pstmt.setString(2, type);
+		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (!rs.isBeforeFirst()) {
-                    System.out.println("找不到符合條件的資料");
-                    return;
-                }
+			pstmt.setString(1, manufacturer);
 
-                // 逐行輸出符合條件的資料
-                while (rs.next()) {
-                    System.out.println("Manufacturer: " + rs.getString("Manufacturer"));
-                    System.out.println("Type: " + rs.getString("Type"));
-                    System.out.println("Min.Price: " + rs.getDouble("Min.Price"));
-                    System.out.println("Price: " + rs.getDouble("Price"));
-                    System.out.println("-------------------------");
-                }
-            }
-        }
-    }     
+			pstmt.setString(2, type);
 
+			pstmt.setDouble(3, minPrice);
 
+			pstmt.setDouble(4, price);
 
-    private static void insert(Connection connection, Scanner scanner) throws SQLException {
+			int rowsInserted = pstmt.executeUpdate();
 
-        System.out.println("請輸入製造商:");
+			System.out.println("插入成功, 影響行數: " + rowsInserted);
 
-        String manufacturer = scanner.nextLine();
+		}
 
-        System.out.println("請輸入類型:");
+	}
 
-        String type = scanner.nextLine();
+	private static void update(Connection connection, Scanner scanner) throws SQLException {
+		
+		System.out.println("請輸入最低價格:");
+	    String MINPRICE = scanner.nextLine();
 
-        System.out.println("請輸入最低價格:");
+	    System.out.println("請輸入價格:");
+	    String PRICE1 = scanner.nextLine() ;
+		
+		
+		System.out.println("請輸入要更新的製造商:");
+	    String manufacturer = scanner.nextLine();
 
-        double minPrice = scanner.nextDouble();
+	    System.out.println("請輸入要更新的類型:");
+	    String type = scanner.nextLine();
 
-        System.out.println("請輸入價格:");
+	    
 
-        double price = scanner.nextDouble();
+		String sql = "UPDATE CARS SET MIN_PRICE=?,PRICE = ? WHERE MANUFACTURER = ? AND TYPE= ? ";
 
+		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
+			pstmt.setString(1, MINPRICE);
 
-        String sql = "INSERT INTO CARS (MANUFACTURER, TYPE, MIN_PRICE, PRICE) VALUES (?, ?, ?, ?)";
+			pstmt.setString(2, PRICE1);
+			
+			pstmt.setString(3, manufacturer);
+			
+			pstmt.setString(4,type );
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+			int rowsUpdated = pstmt.executeUpdate();
 
-            pstmt.setString(1, manufacturer);
+			
+			if (rowsUpdated > 0) {
+	            System.out.println("更新成功, 影響行數: " + rowsUpdated);
+	        } else {
+	            System.out.println("沒有找到符合條件的資料來更新");
+	        }
+		}
 
-            pstmt.setString(2, type);
+	}
 
-            pstmt.setDouble(3, minPrice);
+	private static void delete(Connection connection, Scanner scanner) throws SQLException {
+	    // 提示用戶輸入主鍵值
+	    System.out.println("請輸入要刪除的製造商:");
+	    String manufacturer = scanner.nextLine().trim();
 
-            pstmt.setDouble(4, price);
+	    System.out.println("請輸入要刪除的類型:");
+	    String type = scanner.nextLine().trim();
 
-            int rowsInserted = pstmt.executeUpdate();
+	    // 驗證主鍵輸入
+	    if (manufacturer.isEmpty() || type.isEmpty()) {
+	        System.out.println("製造商和類型不能為空。");
+	        return;
+	    }
 
-            System.out.println("插入成功, 影響行數: " + rowsInserted);
+	    // 刪除記錄的 SQL 語句
+	    String sql = "DELETE FROM CARS WHERE MANUFACTURER = ? AND TYPE = ?";
 
-        }
-
-    }
-
-
-
-    private static void update(Connection connection, Scanner scanner) throws SQLException {
-
-        System.out.println("請輸入要更新的製造商:");
-
-        String manufacturer = scanner.nextLine();
-
-        System.out.println("請輸入新價格:");
-
-        double newPrice = scanner.nextDouble();
-
-
-
-        String sql = "UPDATE CARS SET PRICE = ? WHERE MANUFACTURER = ?";
-
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-
-            pstmt.setDouble(1, newPrice);
-
-            pstmt.setString(2, manufacturer);
-
-            int rowsUpdated = pstmt.executeUpdate();
-
-            System.out.println("更新成功, 影響行數: " + rowsUpdated);
-
-        }
-
-    }
-
-
-
-    private static void delete(Connection connection, Scanner scanner) throws SQLException {
-
-        System.out.println("請輸入要刪除的製造商:");
-
-        String manufacturer = scanner.nextLine();
-
-
-
-        String sql = "DELETE FROM CARS WHERE MANUFACTURER = ?";
-
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-
-            pstmt.setString(1, manufacturer);
-
-            int rowsDeleted = pstmt.executeUpdate();
-
-            System.out.println("刪除成功, 影響行數: " + rowsDeleted);
-
-        }
-
-    }
+	    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+	        // 設置主鍵值
+	        pstmt.setString(1, manufacturer); // 設置第一個佔位符
+	        pstmt.setString(2, type);          // 設置第二個佔位符
+
+	        // 執行刪除操作
+	        int rowsDeleted = pstmt.executeUpdate();
+	        if (rowsDeleted > 0) {
+	            System.out.println("刪除成功, 影響行數: " + rowsDeleted);
+	        } else {
+	            System.out.println("沒有找到符合條件的資料來刪除");
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("SQL 錯誤: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
 
 }
- 
+

@@ -24,7 +24,7 @@ public class CalendarPrinter {
 
 		        // 當月第一天
 		        LocalDate firstDayOfMonth = LocalDate.of(year, month1, 1);
-
+		        
 		        // 當月的最後一天
 		        LocalDate lastDayOfMonth = firstDayOfMonth.withDayOfMonth(firstDayOfMonth.lengthOfMonth());
 
@@ -41,15 +41,16 @@ public class CalendarPrinter {
 		        
 		        // 印空格（直到月份的第一天）
 		        int dayOfWeekValue = firstDayOfMonth.getDayOfWeek().getValue();
-		        for (int i = 1; i < dayOfWeekValue; i++) {
+		        int offset = (dayOfWeekValue) % 7;
+		        for (int i = 0; i < offset; i++) {
 		            System.out.print("   ");
 		        }
 	        
 		        // 打印每一天
 		        for (int day = 1; day <= lastDayOfMonth.getDayOfMonth(); day++) {
-		            System.out.print(String.format("%2d ", day));
+		            System.out.print(String.format("%2d ",  day));
 		            // 換行到下一個星期
-		            if ((day + dayOfWeekValue - 1) % 7 == 0) {
+		            if ((day + offset) % 7 == 0) {
 		                System.out.println();
 		            }
 		        }
