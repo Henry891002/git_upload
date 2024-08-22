@@ -1,0 +1,101 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .hr-solid {
+            border: 0;
+            border-top: 1px solid #d0d0d5;
+        }
+
+        .custom-input {
+            width: 150px;
+            height: 15px;
+        }
+    </style>
+
+</head>
+<script type="text/javascript" src="HashMap.js"></script>
+<script type="text/javascript">
+
+    window.onload = function () {
+        const hashMap = new HashMap();
+
+        document.getElementById('btnput').addEventListener('click', function () {
+            const key = document.getElementById('putkey').value;
+            const value = document.getElementById('putvalue').value;
+
+            //判斷是否有值 
+            if (key) {
+                //判斷是否重複  儲存key,value
+                if (!hashMap.contains(key)) {
+                    hashMap.put(key, value);
+                    result();
+                } else {
+                    alert('key已存在');
+                }
+
+            } else {
+                alert('key不能空白');
+            }
+        });
+
+        document.getElementById('btnclear').addEventListener('click', function () {
+            hashMap.clear();
+            result();
+            clearInputFields();
+
+        });
+
+        function result() {
+            const keys = hashMap.keys();  //取all key
+            const result1 = document.getElementById('res');
+            // const currentKey = document.getElementById('putkey').value;
+            // const currentValue = document.getElementById('putvalue').value;
+
+            result1.innerHTML = '【RESULT】<br>';    //保留Result
+
+            // if (currentKey || currentValue) {
+            //     result1.innerHTML += `<p>【RESULT】</p>`;
+            //     }
+
+            for (const key of keys) {
+                result1.innerHTML += `<p>${key}: ${hashMap.get(key)}</p>`; //+=累積前筆資料
+            }
+        }
+
+        function clearInputFields() {
+            document.getElementById('putkey').value = '';
+            document.getElementById('putvalue').value = '';
+        };
+    }
+</script>
+
+<body>
+    <div>
+        <table border="0">
+            <tr>
+                <td>KEY</td>
+                <td><input id='putkey' type="text" class="custom-input" /></td>
+            </tr>
+            <tr>
+                <td>VALUE</td>
+                <td><input id='putvalue' type="text" class="custom-input" /></td>
+            </tr>
+        </table>
+        <form>
+            <hr class="hr-solid"><br>
+            <button id='btnput' type="button" style="margin-right: 10px;">PUT</button>
+            <button id='btnclear' type="button">CLEAR</button><br><br>
+            <hr class="hr-solid">
+        </form>
+        <br><label id='res'>【RESULT】<br>
+            <!-- <p id='res'></p> -->
+        </label>
+    </div>
+</body>
+
+</html>
