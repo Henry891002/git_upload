@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table操作</title>
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th,
+        td {
+            padding: 8px;
+        }
+
+        .form-table {
+            margin-bottom: 10px;
+            width: 70%;
+        }
+
+        .form-table input,
+        .form-table button {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-table td {
+            width: 25%;
+        }
+
+        .form-table .buttons {
+            display: contents;
+
+        }
+
+        .form-table .buttons button {
+            width: 10%;
+        }
+    </style>
+
+<body>
+    <h3>執行結果：</h3>
+    <table class="form-table">
+        <tr>
+            <td>製造商</td>
+            <td><input type="text" id="manufacturer" placeholder="製造商"></td>
+            <td>類別</td>
+            <td><input type="text" id="category" placeholder="類別"></td>
+        </tr>
+        <tr>
+            <td>底價</td>
+            <td><input type="number" id="basePrice" placeholder="底價"></td>
+            <td>售價</td>
+            <td><input type="number" id="salePrice" placeholder="售價"></td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <div class="buttons">
+                    <button id="add">新增</button>
+                    <button id="update">修改</button>
+                    <button id="clear">清空</button>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                <th>序號</th>
+                <th>製造商</th>
+                <th>類別</th>
+                <th>底價</th>
+                <th>售價</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- 資料列 -->
+        </tbody>
+    </table>
+
+    <script>
+        const manufacturerInput = document.getElementById('manufacturer');
+        const categoryInput = document.getElementById('category');
+        const basePriceInput = document.getElementById('basePrice');
+        const salePriceInput = document.getElementById('salePrice');
+        const tableBody = document.getElementById('tableBody');
+
+        let selectedRow = null;
+
+        document.getElementById('add').addEventListener('click', () => {
+            const manufacturer = manufacturerInput.value.trim();
+            const category = categoryInput.value.trim();
+            const basePrice = basePriceInput.value;
+            const salePrice = salePriceInput.value;
+
+            if (!manufacturer && !category) {
+                alert('製造商和類別不可空白');
+                manufacturerInput.focus();
+            } else if (!manufacturer) {
+                alert('製造商不可空白');
+                manufacturerInput.focus();
+            } else if (!category) {
+                alert('類別不可空白');
+                categoryInput.focus();
+            } else {
+                const row = tableBody.insertRow();
+                const radio = document.createElement('input');
+                radio.setAttribute('type', 'radio');
+                radio.setAttribute('name', 'selectRow');
+                radio.setAttribute('onclick', 'selectRow(this)');
+                row.insertCell(0).appendChild(radio);
+                row.insertCell(1).innerText = tableBody.rows.length;
+                row.insertCell(2).innerText = manufacturer;
+                row.insertCell(3).innerText = category;
+                row.insertCell(4).innerText = basePrice;
+                row.insertCell(5).innerText = salePrice;
+
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerText = '刪除';
+                deleteBtn.addEventListener('click', () => {
+                    tableBody.deleteRow(row.rowIndex - 1);
+                    reindex();
+                });
+                row.insertCell(6).appendChild(deleteBtn);
+            }
+        });
+
+        document.getElementById('clear').addEventListener('click', () => {
+            manufacturerInput.value = '';
+            categoryInput.value = '';
+            basePriceInput.value = '';
+            salePriceInput.value = '';
+            tableBody.innerHTML = '';
+        });
+
+        document.getElementById('update').addEventListener('click', () => {
+            if (selectedRow) {
+                selectedRow.cells[2].innerText = manufacturerInput.value;
+                selectedRow.cells[3].innerText = categoryInput.value;
+                selectedRow.cells[4].innerText = basePriceInput.value;
+                selectedRow.cells[5].innerText = salePriceInput.value;
+            }
+        });
+
+        function reindex() {
+            for (let i = 0; i < tableBody.rows.length; i++) {
+                tableBody.rows[i].cells[1].innerText = i + 1;
+            }
+        }
+
+        function selectRow(radio) {
+            if (confirm('確定要修改這筆資料嗎？')) {
+                selectedRow = radio.parentElement.parentElement;
+                manufacturerInput.value = selectedRow.cells[2].innerText;
+                categoryInput.value = selectedRow.cells[3].innerText;
+                basePriceInput.value = selectedRow.cells[4].innerText;
+                salePriceInput.value = selectedRow.cells[5].innerText;
+            } else {
+                radio.checked = false;
+            }
+        }
+
+
+    </script>
+</body>
+</head>
+
+</html>
