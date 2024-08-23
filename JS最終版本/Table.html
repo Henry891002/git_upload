@@ -73,7 +73,7 @@
                 const radio = document.createElement('input');
                 radio.setAttribute('type', 'radio');
                 radio.setAttribute('name', 'selectRow');
-                radio.setAttribute('onclick', 'selectRow(this)');
+                radio.addEventListener('click', () => {selectRow(radio)});
                 row.insertCell(0).appendChild(radio);
                 row.insertCell(1).innerText = tableBody.rows.length;
                 row.insertCell(2).innerText = manufacturer;
@@ -97,6 +97,7 @@
                 basePriceInput.value = '';
                 salePriceInput.value = '';
                 tableBody.innerHTML = '';
+                selectedRow = null; 
             });
 
             document.getElementById('update').addEventListener('click', () => {
@@ -124,15 +125,11 @@
             }
 
             function selectRow(radio) {
-                if (confirm('確定要修改這筆資料嗎？')) {
-                    selectedRow = radio.parentElement.parentElement;
-                    manufacturerInput.value = selectedRow.cells[2].innerText;
-                    categoryInput.value = selectedRow.cells[3].innerText;
-                    basePriceInput.value = selectedRow.cells[4].innerText;
-                    salePriceInput.value = selectedRow.cells[5].innerText;
-                } else {
-                    radio.checked = false;
-                }
+                selectedRow = radio.parentElement.parentElement;
+                manufacturerInput.value = selectedRow.cells[2].innerText;
+                categoryInput.value = selectedRow.cells[3].innerText;
+                basePriceInput.value = selectedRow.cells[4].innerText;
+                salePriceInput.value = selectedRow.cells[5].innerText;
             }
         }
     </script>
