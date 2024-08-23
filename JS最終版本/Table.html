@@ -44,29 +44,31 @@
         }
     </style>
     <script>
-        window.onload=function(){
-        const manufacturerInput = document.getElementById('manufacturer');
-        const categoryInput = document.getElementById('category');
-        const basePriceInput = document.getElementById('basePrice');
-        const salePriceInput = document.getElementById('salePrice');
-        const tableBody = document.getElementById('tableBody');
+        window.onload = function () {
+            const manufacturerInput = document.getElementById('manufacturer');
+            const categoryInput = document.getElementById('category');
+            const basePriceInput = document.getElementById('basePrice');
+            const salePriceInput = document.getElementById('salePrice');
+            const tableBody = document.getElementById('tableBody');
 
-        let selectedRow = null;
+            let selectedRow = null;
 
-        document.getElementById('add').addEventListener('click', () => {
-            const manufacturer = manufacturerInput.value.trim();
-            const category = categoryInput.value.trim();
-            const basePrice = basePriceInput.value;
-            const salePrice = salePriceInput.value;
+            document.getElementById('add').addEventListener('click', () => {
+                const manufacturer = manufacturerInput.value.trim();
+                const category = categoryInput.value.trim();
+                const basePrice = basePriceInput.value;
+                const salePrice = salePriceInput.value;
 
 
-            if (!manufacturer) {
-                alert('製造商不可空白');
-                manufacturerInput.focus();
-            } else if (!category) {
-                alert('類別不可空白');
-                categoryInput.focus();
-            } else {
+                if (!manufacturer) {
+                    alert('製造商不可空白');
+                    manufacturerInput.focus();
+                    return;
+                } else if (!category) {
+                    alert('類別不可空白');
+                    categoryInput.focus();
+                    return;
+                }
                 const row = tableBody.insertRow();
                 const radio = document.createElement('input');
                 radio.setAttribute('type', 'radio');
@@ -86,52 +88,53 @@
                     reindex();
                 });
                 row.insertCell(6).appendChild(deleteBtn);
-            }
-        });
 
-        document.getElementById('clear').addEventListener('click', () => {
-            manufacturerInput.value = '';
-            categoryInput.value = '';
-            basePriceInput.value = '';
-            salePriceInput.value = '';
-            tableBody.innerHTML = '';
-        });
+            });
 
-        document.getElementById('update').addEventListener('click', () => {
-            if (selectedRow) {
-                if (confirm('確定要更新這筆資料嗎？')) {
-                    selectedRow.cells[2].innerText = manufacturerInput.value;
-                    selectedRow.cells[3].innerText = categoryInput.value;
-                    selectedRow.cells[4].innerText = basePriceInput.value;
-                    selectedRow.cells[5].innerText = salePriceInput.value;
-                    alert('資料已更新成功！');
+            document.getElementById('clear').addEventListener('click', () => {
+                manufacturerInput.value = '';
+                categoryInput.value = '';
+                basePriceInput.value = '';
+                salePriceInput.value = '';
+                tableBody.innerHTML = '';
+            });
+
+            document.getElementById('update').addEventListener('click', () => {
+                if (selectedRow) {
+                    if (confirm('確定要更新這筆資料嗎？')) {
+                        selectedRow.cells[2].innerText = manufacturerInput.value;
+                        selectedRow.cells[3].innerText = categoryInput.value;
+                        selectedRow.cells[4].innerText = basePriceInput.value;
+                        selectedRow.cells[5].innerText = salePriceInput.value;
+                        alert('資料已更新成功！');
+                    } else {
+                        alert('資料未被更新。');
+                    }
                 } else {
-                    alert('資料未被更新。');
+                    alert('請先選擇一筆資料進行更新。');
+                    return;
                 }
-            } else {
-                alert('請先選擇一筆資料進行更新。');
+            });
+
+
+            function reindex() {
+                for (let i = 0; i < tableBody.rows.length; i++) {
+                    tableBody.rows[i].cells[1].innerText = i + 1;
+                }
             }
-        });
 
-
-        function reindex() {
-            for (let i = 0; i < tableBody.rows.length; i++) {
-                tableBody.rows[i].cells[1].innerText = i + 1;
-            }
-        }
-
-        function selectRow(radio) {
-            if (confirm('確定要修改這筆資料嗎？')) {
-                selectedRow = radio.parentElement.parentElement;
-                manufacturerInput.value = selectedRow.cells[2].innerText;
-                categoryInput.value = selectedRow.cells[3].innerText;
-                basePriceInput.value = selectedRow.cells[4].innerText;
-                salePriceInput.value = selectedRow.cells[5].innerText;
-            } else {
-                radio.checked = false;
+            function selectRow(radio) {
+                if (confirm('確定要修改這筆資料嗎？')) {
+                    selectedRow = radio.parentElement.parentElement;
+                    manufacturerInput.value = selectedRow.cells[2].innerText;
+                    categoryInput.value = selectedRow.cells[3].innerText;
+                    basePriceInput.value = selectedRow.cells[4].innerText;
+                    salePriceInput.value = selectedRow.cells[5].innerText;
+                } else {
+                    radio.checked = false;
+                }
             }
         }
-    }
     </script>
 </head>
 
@@ -178,4 +181,5 @@
         </tbody>
     </table>
 </body>
+
 </html>

@@ -7,6 +7,7 @@
     <title>HashMap Demo</title>
     <script src="hashmap1.js"></script>
     <script>
+        window.onload = function () {
         // 創建一個 HashMap 實例
         var hashMap = new HashMap();
 
@@ -54,15 +55,16 @@
 
         // 更新結果區域的顯示內容
         function updateResult() {
-            var keys = hashMap.keys();
-            var output = '';
+            const keys = hashMap.keys();
+            let output = '';
 
-            keys.forEach(function (key) {
-                output += '' + key + ':' + '' + hashMap.get(key) + '\n';
+            keys.forEach(key => {
+                output += `${key}:${hashMap.get(key)}\n`;
             });
 
             result.textContent = output;
         }
+    }
 
     </script>
 </head>
