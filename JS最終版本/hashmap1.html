@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HashMap Demo</title>
+    <style>
+        /* 添加按鈕上下的分隔線樣式 */
+        .button-container {
+            border-top: 1px solid #000;
+            margin-top: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #000;
+        }
+
+        /* 調整表單行，使label和input對齊 */
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        /* 使label寬度固定，確保key和value輸入框對齊 */
+        label {
+            display: inline-block;
+            width: 60px;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        input {
+            width: 200px;
+        }
+
+        /* 調整結果區域的間距與文字大小 */
+        #result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-size: 16px;
+            /* 調整字體大小 */
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    </style>
+
+
+<body>
+    <div class="form-row">
+        <label for="keyInput">KEY</label>
+        <input type="text" id="keyInput">
+    </div>
+    <div class="form-row">
+        <label for="valueInput">VALUE</label>
+        <input type="text" id="valueInput">
+    </div>
+
+    <!-- 包含按鈕和分隔線的容器 -->
+    <div class="button-container">
+        <button id="putButton">PUT</button>
+        <button id="clearButton">CLEAR</button>
+    </div>
+
+    <h5>【RESULT】</h5>
+    <div class="result-wrapper">
+        <pre id="result"></pre>
+    </div>
+
+
+</body>
+<script src="hashmap1.js"></script>
+
+</head>
+
+</html>
